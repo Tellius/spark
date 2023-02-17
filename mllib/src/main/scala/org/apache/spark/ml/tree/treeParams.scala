@@ -39,7 +39,7 @@ import org.apache.spark.sql.types.{DataType, DoubleType, StructType}
  * Note: Marked as private since this may be made public in the future.
  */
 private[ml] trait DecisionTreeParams extends PredictorParams
-  with HasCheckpointInterval with HasSeed with HasWeightCol {
+  with HasCheckpointInterval with HasSeed with HasWeightCol with HasIntermediateStorageLevel {
 
   /**
    * Leaf indices column name.
@@ -168,6 +168,9 @@ private[ml] trait DecisionTreeParams extends PredictorParams
 
   /** @group expertGetParam */
   final def getCacheNodeIds: Boolean = $(cacheNodeIds)
+
+  final def setIntermediateStorageLevel(value: String): this.type = 
+    set(intermediateStorageLevel, value)
 
   /** (private[ml]) Create a Strategy instance to use with the old API. */
   private[ml] def getOldStrategy(

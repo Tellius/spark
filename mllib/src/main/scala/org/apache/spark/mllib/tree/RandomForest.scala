@@ -98,7 +98,7 @@ private class RandomForest (
       treeStrategy.bootstrap = true
     }
     val trees: Array[NewDTModel] =
-      NewRandomForest.run(input, treeStrategy, numTrees, featureSubsetStrategy, seed.toLong)
+      NewRandomForest.run(input, treeStrategy, numTrees, featureSubsetStrategy, seed.toLong, "MEMORY_AND_DISK")
     new RandomForestModel(strategy.algo, trees.map(_.toOld))
   }
 

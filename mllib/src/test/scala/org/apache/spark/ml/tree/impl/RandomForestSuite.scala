@@ -221,7 +221,7 @@ class RandomForestSuite extends SparkFunSuite with MLlibTestSparkContext {
     withClue("DecisionTree requires number of features > 0," +
       " but was given an empty features vector") {
       intercept[IllegalArgumentException] {
-        RandomForest.run(rdd, strategy, 1, "all", 42L, instr = None)
+        RandomForest.run(rdd, strategy, 1, "all", 42L, instr = None, "MEMORY_AND_DISK")
       }
     }
   }
@@ -237,7 +237,7 @@ class RandomForestSuite extends SparkFunSuite with MLlibTestSparkContext {
           numClasses = 2,
           maxBins = 5,
           categoricalFeaturesInfo = Map(0 -> 1, 1 -> 5))
-    val Array(tree) = RandomForest.run(rdd, strategy, 1, "all", 42L, instr = None)
+    val Array(tree) = RandomForest.run(rdd, strategy, 1, "all", 42L, instr = None, "MEMORY_AND_DISK")
     assert(tree.rootNode.impurity === -1.0)
     assert(tree.depth === 0)
     assert(tree.rootNode.prediction === instance.label)
@@ -248,7 +248,7 @@ class RandomForestSuite extends SparkFunSuite with MLlibTestSparkContext {
       Variance,
       maxDepth = 2,
       maxBins = 5)
-    val Array(tree2) = RandomForest.run(rdd, strategy2, 1, "all", 42L, instr = None)
+    val Array(tree2) = RandomForest.run(rdd, strategy2, 1, "all", 42L, instr = None, "MEMORY_AND_DISK")
     assert(tree2.rootNode.impurity === -1.0)
     assert(tree2.depth === 0)
     assert(tree2.rootNode.prediction === instance.label)
@@ -434,7 +434,7 @@ class RandomForestSuite extends SparkFunSuite with MLlibTestSparkContext {
       numClasses = 2, categoricalFeaturesInfo = Map(0 -> 3), maxBins = 3)
 
     val model = RandomForest.run(input, strategy, numTrees = 1, featureSubsetStrategy = "all",
-      seed = 42, instr = None, prune = false).head
+      seed = 42, instr = None, "MEMORY_AND_DISK", prune = false).head
 
     model.rootNode match {
       case n: InternalNode => n.split match {
@@ -458,9 +458,9 @@ class RandomForestSuite extends SparkFunSuite with MLlibTestSparkContext {
       new OldStrategy(OldAlgo.Classification, Entropy, 3, 2, 100, maxMemoryInMB = 0)
 
     val tree1 = RandomForest.run(rdd, strategy1, numTrees = 1, featureSubsetStrategy = "all",
-      seed = 42, instr = None).head
+      seed = 42, instr = None, "MEMORY_AND_DISK").head
     val tree2 = RandomForest.run(rdd, strategy2, numTrees = 1, featureSubsetStrategy = "all",
-      seed = 42, instr = None).head
+      seed = 42, instr = None, "MEMORY_AND_DISK").head
 
     def getChildren(rootNode: Node): Array[InternalNode] = rootNode match {
       case n: InternalNode =>
@@ -685,10 +685,10 @@ class RandomForestSuite extends SparkFunSuite with MLlibTestSparkContext {
       numClasses = numClasses, maxBins = 32)
 
     val prunedTree = RandomForest.run(rdd, strategy, numTrees = 1, featureSubsetStrategy = "auto",
-      seed = 42, instr = None).head
+      seed = 42, instr = None, "MEMORY_AND_DISK").head
 
     val unprunedTree = RandomForest.run(rdd, strategy, numTrees = 1, featureSubsetStrategy = "auto",
-      seed = 42, instr = None, prune = false).head
+      seed = 42, instr = None, "MEMORY_AND_DISK", prune = false).head
 
     assert(prunedTree.numNodes === 5)
     assert(unprunedTree.numNodes === 7)
@@ -715,10 +715,10 @@ class RandomForestSuite extends SparkFunSuite with MLlibTestSparkContext {
       numClasses = 0, maxBins = 32)
 
     val prunedTree = RandomForest.run(rdd, strategy, numTrees = 1, featureSubsetStrategy = "auto",
-      seed = 42, instr = None).head
+      seed = 42, instr = None, "MEMORY_AND_DISK").head
 
     val unprunedTree = RandomForest.run(rdd, strategy, numTrees = 1, featureSubsetStrategy = "auto",
-      seed = 42, instr = None, prune = false).head
+      seed = 42, instr = None, "MEMORY_AND_DISK", prune = false).head
 
     assert(prunedTree.numNodes === 3)
     assert(unprunedTree.numNodes === 5)
@@ -735,14 +735,14 @@ class RandomForestSuite extends SparkFunSuite with MLlibTestSparkContext {
       Instance(inst.label, 1000, inst.features)
     }
     val strategy = new OldStrategy(OldAlgo.Classification, Gini, 3, 2)
-    val unitWeightTrees = RandomForest.run(rddWithUnitWeights, strategy, 3, "all", 42L, None)
+    val unitWeightTrees = RandomForest.run(rddWithUnitWeights, strategy, 3, "all", 42L, None, "MEMORY_AND_DISK")
 
-    val smallWeightTrees = RandomForest.run(rddWithSmallWeights, strategy, 3, "all", 42L, None)
+    val smallWeightTrees = RandomForest.run(rddWithSmallWeights, strategy, 3, "all", 42L, None, "MEMORY_AND_DISK")
     unitWeightTrees.zip(smallWeightTrees).foreach { case (unitTree, smallWeightTree) =>
       TreeTests.checkEqual(unitTree, smallWeightTree)
     }
 
-    val bigWeightTrees = RandomForest.run(rddWithBigWeights, strategy, 3, "all", 42L, None)
+    val bigWeightTrees = RandomForest.run(rddWithBigWeights, strategy, 3, "all", 42L, None, "MEMORY_AND_DISK")
     unitWeightTrees.zip(bigWeightTrees).foreach { case (unitTree, bigWeightTree) =>
       TreeTests.checkEqual(unitTree, bigWeightTree)
     }
@@ -759,19 +759,19 @@ class RandomForestSuite extends SparkFunSuite with MLlibTestSparkContext {
     val rdd = sc.parallelize(data)
     val strategy = new OldStrategy(OldAlgo.Classification, Gini, 3, 2,
       minWeightFractionPerNode = 0.5)
-    val Array(tree1) = RandomForest.run(rdd, strategy, 1, "all", 42L, None)
+    val Array(tree1) = RandomForest.run(rdd, strategy, 1, "all", 42L, None, "MEMORY_AND_DISK")
     assert(tree1.depth === 0)
 
     strategy.minWeightFractionPerNode = 0.0
-    val Array(tree2) = RandomForest.run(rdd, strategy, 1, "all", 42L, None)
+    val Array(tree2) = RandomForest.run(rdd, strategy, 1, "all", 42L, None, "MEMORY_AND_DISK")
     assert(tree2.depth === 1)
 
     strategy.minInstancesPerNode = 2
-    val Array(tree3) = RandomForest.run(rdd, strategy, 1, "all", 42L, None)
+    val Array(tree3) = RandomForest.run(rdd, strategy, 1, "all", 42L, None, "MEMORY_AND_DISK")
     assert(tree3.depth === 0)
 
     strategy.minInstancesPerNode = 1
-    val Array(tree4) = RandomForest.run(rdd, strategy, 1, "all", 42L, None)
+    val Array(tree4) = RandomForest.run(rdd, strategy, 1, "all", 42L, None, "MEMORY_AND_DISK")
     assert(tree4.depth === 1)
   }
 }

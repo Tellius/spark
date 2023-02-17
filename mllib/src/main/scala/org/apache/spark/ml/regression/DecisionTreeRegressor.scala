@@ -123,7 +123,7 @@ class DecisionTreeRegressor @Since("1.4.0") (@Since("1.4.0") override val uid: S
     instr.logParams(this, params: _*)
 
     val trees = RandomForest.run(instances, strategy, numTrees = 1, featureSubsetStrategy = "all",
-      seed = $(seed), instr = Some(instr), parentUID = Some(uid))
+      seed = $(seed), instr = Some(instr), parentUID = Some(uid), intermediateStorageLevel = $(intermediateStorageLevel))
 
     trees.head.asInstanceOf[DecisionTreeRegressionModel]
   }

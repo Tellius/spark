@@ -132,7 +132,7 @@ class DecisionTreeClassifier @Since("1.4.0") (
       maxMemoryInMB, cacheNodeIds, checkpointInterval, impurity, seed, thresholds)
 
     val trees = RandomForest.run(instances, strategy, numTrees = 1, featureSubsetStrategy = "all",
-      seed = $(seed), instr = Some(instr), parentUID = Some(uid))
+      seed = $(seed), instr = Some(instr), parentUID = Some(uid), intermediateStorageLevel = $(intermediateStorageLevel))
 
     trees.head.asInstanceOf[DecisionTreeClassificationModel]
   }

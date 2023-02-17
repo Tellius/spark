@@ -145,7 +145,14 @@ object MimaExcludes {
     ProblemFilters.exclude[DirectMissingMethodProblem]("org.apache.spark.shuffle.api.ShuffleMapOutputWriter.commitAllPartitions"),
     ProblemFilters.exclude[DirectMissingMethodProblem]("org.apache.spark.shuffle.api.SingleSpillShuffleMapOutputWriter.transferMapSpillFile"),
     ProblemFilters.exclude[ReversedMissingMethodProblem]("org.apache.spark.shuffle.api.SingleSpillShuffleMapOutputWriter.transferMapSpillFile"),
-    ProblemFilters.exclude[ReversedMissingMethodProblem]("org.apache.spark.shuffle.api.ShuffleMapOutputWriter.commitAllPartitions")
+    ProblemFilters.exclude[ReversedMissingMethodProblem]("org.apache.spark.shuffle.api.ShuffleMapOutputWriter.commitAllPartitions"),
+
+    // [SPARK-20723][ML]Add intermediate storage level to tree based classifiers
+    ProblemFilters.exclude[InheritedNewAbstractMethodProblem]("org.apache.spark.ml.param.shared.HasIntermediateStorageLevel.org$apache$spark$ml$param$shared$HasIntermediateStorageLevel$_setter_$intermediateStorageLevel_="),
+    ProblemFilters.exclude[InheritedNewAbstractMethodProblem]("org.apache.spark.ml.param.shared.HasIntermediateStorageLevel.getIntermediateStorageLevel"),
+    ProblemFilters.exclude[InheritedNewAbstractMethodProblem]("org.apache.spark.ml.param.shared.HasIntermediateStorageLevel.intermediateStorageLevel"),
+    ProblemFilters.exclude[FinalMethodProblem]("org.apache.spark.ml.recommendation.ALS.getIntermediateStorageLevel"),
+    ProblemFilters.exclude[FinalMethodProblem]("org.apache.spark.ml.recommendation.ALS.intermediateStorageLevel")
   )
 
   def excludes(version: String) = version match {

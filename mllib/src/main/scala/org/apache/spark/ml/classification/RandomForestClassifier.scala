@@ -159,7 +159,7 @@ class RandomForestClassifier @Since("1.4.0") (
       subsamplingRate, thresholds, cacheNodeIds, checkpointInterval, bootstrap)
 
     val trees = RandomForest
-      .run(instances, strategy, getNumTrees, getFeatureSubsetStrategy, getSeed, Some(instr))
+      .run(instances, strategy, getNumTrees, getFeatureSubsetStrategy, getSeed, Some(instr), $(intermediateStorageLevel))
       .map(_.asInstanceOf[DecisionTreeClassificationModel])
     trees.foreach(copyValues(_))
 
