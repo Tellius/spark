@@ -966,7 +966,7 @@ class LogisticRegression @Since("1.2.0") (
 
     val maxMemUsage = (actualBlockSizeInMB * 1024L * 1024L).ceil.toLong
     val blocks = InstanceBlock.blokifyWithMaxMemUsage(scaled, maxMemUsage)
-      .persist(StorageLevel.MEMORY_AND_DISK)
+      .persist(StorageLevel.DISK_ONLY)
       .setName(s"$uid: training blocks (blockSizeInMB=$actualBlockSizeInMB)")
 
     val costFun = if (multinomial) {

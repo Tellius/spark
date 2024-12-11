@@ -1065,15 +1065,15 @@ class ALSStorageSuite
         rdd.name -> ((id, rdd.getStorageLevel))
     }.toMap
     defaultFactorRDDs.foreach { case (_, (id, level)) =>
-      assert(level == StorageLevel.MEMORY_AND_DISK)
+      assert(level == StorageLevel.DISK_ONLY)
     }
-    defaultListener.storageLevels.foreach(level => assert(level == StorageLevel.MEMORY_AND_DISK))
+    defaultListener.storageLevels.foreach(level => assert(level == StorageLevel.DISK_ONLY))
 
     // add listener to check intermediate RDD non-default storage levels
     val nonDefaultListener = new IntermediateRDDStorageListener
     sc.addSparkListener(nonDefaultListener)
     val nonDefaultModel = als
-      .setFinalStorageLevel("MEMORY_ONLY")
+      .setFinalStorageLevel("DISK_ONLY")
       .setIntermediateStorageLevel("DISK_ONLY")
       .fit(data)
     // check final factor RDD non-default storage levels
@@ -1082,7 +1082,7 @@ class ALSStorageSuite
         || rdd.name == "itemFactors" && rdd.id != defaultFactorRDDs("itemFactors")._1 =>
         rdd.getStorageLevel
     }
-    levels.foreach(level => assert(level == StorageLevel.MEMORY_ONLY))
+    levels.foreach(level => assert(level == StorageLevel.DISK_ONLY))
     nonDefaultListener.storageLevels.foreach(level => assert(level == StorageLevel.DISK_ONLY))
   }
 }
@@ -1127,8 +1127,8 @@ object ALSSuite extends Logging {
     "alpha" -> 0.9,
     "nonnegative" -> true,
     "checkpointInterval" -> 20,
-    "intermediateStorageLevel" -> "MEMORY_ONLY",
-    "finalStorageLevel" -> "MEMORY_AND_DISK_SER"
+    "intermediateStorageLevel" -> "DISK_ONLY",
+    "finalStorageLevel" -> "DISK_ONLY"
   )
 
   // Helper functions to generate test data we share between ALS test suites

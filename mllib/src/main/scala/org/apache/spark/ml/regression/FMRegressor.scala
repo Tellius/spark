@@ -419,7 +419,7 @@ class FMRegressor @Since("3.0.0") (
     val labeledPoint = extractLabeledPoints(dataset)
     val data: RDD[(Double, OldVector)] = labeledPoint.map(x => (x.label, x.features))
 
-    if (handlePersistence) data.persist(StorageLevel.MEMORY_AND_DISK)
+    if (handlePersistence) data.persist(StorageLevel.DISK_ONLY)
 
     val (coefficients, _) = trainImpl(data, numFeatures, SquaredError)
 

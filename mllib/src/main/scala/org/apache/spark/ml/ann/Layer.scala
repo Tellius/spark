@@ -850,7 +850,7 @@ private[ml] class FeedForwardTrainer(
       (v._1, OldVectors.fromML(v._2))
     }
     val handlePersistence = trainData.getStorageLevel == StorageLevel.NONE
-    if (handlePersistence) trainData.persist(StorageLevel.MEMORY_AND_DISK)
+    if (handlePersistence) trainData.persist(StorageLevel.DISK_ONLY)
     val (newWeights, lossHistory) = optimizer match {
       case lbfgs: LBFGS => lbfgs.optimizeWithLossReturned(trainData, w)
       case sgd: GradientDescent => sgd.optimizeWithLossReturned(trainData, w)

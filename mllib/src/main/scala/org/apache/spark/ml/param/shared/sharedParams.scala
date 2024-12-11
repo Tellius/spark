@@ -482,7 +482,7 @@ trait HasAggregationDepth extends Params {
 }
 
 /**
- * Trait for shared param intermediateStorageLevel (default: "MEMORY_AND_DISK").
+ * Trait for shared param intermediateStorageLevel (default: "DISK_ONLY").
  */
 trait HasIntermediateStorageLevel extends Params {
 
@@ -492,7 +492,7 @@ trait HasIntermediateStorageLevel extends Params {
    */
   final val intermediateStorageLevel: Param[String] = new Param[String](this, "intermediateStorageLevel", "Param for StorageLevel for intermediate datasets", (s: String) => Try(StorageLevel.fromString(s)).isSuccess && s != "NONE")
 
-  setDefault(intermediateStorageLevel, "MEMORY_AND_DISK")
+  setDefault(intermediateStorageLevel, "DISK_ONLY")
 
   /** @group expertGetParam */
   final def getIntermediateStorageLevel: String = $(intermediateStorageLevel)

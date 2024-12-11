@@ -403,7 +403,7 @@ class GaussianMixture @Since("2.0.0") (
       .setName("training instances")
 
     val handlePersistence = dataset.storageLevel == StorageLevel.NONE
-    if (handlePersistence) { instances.persist(StorageLevel.MEMORY_AND_DISK) }
+    if (handlePersistence) { instances.persist(StorageLevel.DISK_ONLY) }
     // TODO: SPARK-15785 Support users supplied initial GMM.
     val (weights, gaussians) = initRandom(instances, $(k), numFeatures)
     val (logLikelihood, iteration) = trainImpl(instances, weights, gaussians, numFeatures, instr)

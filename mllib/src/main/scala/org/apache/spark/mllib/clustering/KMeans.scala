@@ -223,10 +223,10 @@ class KMeans private (
       .map { case ((v, w), norm) => new VectorWithNorm(v, norm, w) }
 
     if (handlePersistence) {
-      vectors.persist(StorageLevel.MEMORY_AND_DISK)
+      vectors.persist(StorageLevel.DISK_ONLY)
     } else {
       // Compute squared norms and cache them.
-      norms.persist(StorageLevel.MEMORY_AND_DISK)
+      norms.persist(StorageLevel.DISK_ONLY)
     }
     val model = runAlgorithmWithWeight(vectors, instr)
     if (handlePersistence) { vectors.unpersist() } else { norms.unpersist() }
@@ -400,7 +400,7 @@ class KMeans private (
       val preCosts = costs
       costs = data.zip(preCosts).map { case (point, cost) =>
         math.min(distanceMeasureInstance.pointCost(bcNewCenters.value, point), cost)
-      }.persist(StorageLevel.MEMORY_AND_DISK)
+      }.persist(StorageLevel.DISK_ONLY)
       val sumCosts = costs.sum()
 
       bcNewCenters.unpersist()

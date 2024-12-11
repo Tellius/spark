@@ -89,7 +89,7 @@ private[python] class PythonMLLibAPI extends Serializable {
       data: JavaRDD[LabeledPoint],
       initialWeights: Vector): JList[Object] = {
     try {
-      val model = learner.run(data.rdd.persist(StorageLevel.MEMORY_AND_DISK), initialWeights)
+      val model = learner.run(data.rdd.persist(StorageLevel.DISK_ONLY), initialWeights)
       model match {
         case lrModel: LogisticRegressionModel =>
           List(lrModel.weights, lrModel.intercept, lrModel.numFeatures, lrModel.numClasses)
@@ -331,7 +331,7 @@ private[python] class PythonMLLibAPI extends Serializable {
     val isotonicRegressionAlg = new IsotonicRegression().setIsotonic(isotonic)
     val input = data.rdd.map { x =>
       (x(0), x(1), x(2))
-    }.persist(StorageLevel.MEMORY_AND_DISK)
+    }.persist(StorageLevel.DISK_ONLY)
     try {
       val model = isotonicRegressionAlg.run(input)
       List[AnyRef](model.boundaryVector, model.predictionVector).asJava
@@ -365,7 +365,7 @@ private[python] class PythonMLLibAPI extends Serializable {
     if (!initialModel.isEmpty()) kMeansAlg.setInitialModel(new KMeansModel(initialModel))
 
     try {
-      kMeansAlg.run(data.rdd.persist(StorageLevel.MEMORY_AND_DISK))
+      kMeansAlg.run(data.rdd.persist(StorageLevel.DISK_ONLY))
     } finally {
       data.rdd.unpersist()
     }
@@ -698,7 +698,7 @@ private[python] class PythonMLLibAPI extends Serializable {
       .setWindowSize(windowSize)
     if (seed != null) word2vec.setSeed(seed)
     try {
-      val model = word2vec.fit(dataJRDD.rdd.persist(StorageLevel.MEMORY_AND_DISK_SER))
+      val model = word2vec.fit(dataJRDD.rdd.persist(StorageLevel.DISK_ONLY))
       new Word2VecModelWrapper(model)
     } finally {
       dataJRDD.rdd.unpersist()
@@ -737,7 +737,7 @@ private[python] class PythonMLLibAPI extends Serializable {
       minInstancesPerNode = minInstancesPerNode,
       minInfoGain = minInfoGain)
     try {
-      DecisionTree.train(data.rdd.persist(StorageLevel.MEMORY_AND_DISK), strategy)
+      DecisionTree.train(data.rdd.persist(StorageLevel.DISK_ONLY), strategy)
     } finally {
       data.rdd.unpersist()
     }
@@ -770,7 +770,7 @@ private[python] class PythonMLLibAPI extends Serializable {
       numClasses = numClasses,
       maxBins = maxBins,
       categoricalFeaturesInfo = categoricalFeaturesInfo.asScala.toMap)
-    val cached = data.rdd.persist(StorageLevel.MEMORY_AND_DISK)
+    val cached = data.rdd.persist(StorageLevel.DISK_ONLY)
     // Only done because methods below want an int, not an optional Long
     val intSeed = getSeedOrDefault(seed).toInt
     try {
@@ -807,7 +807,7 @@ private[python] class PythonMLLibAPI extends Serializable {
     boostingStrategy.treeStrategy.setMaxBins(maxBins)
     boostingStrategy.treeStrategy.categoricalFeaturesInfo = categoricalFeaturesInfo.asScala.toMap
 
-    val cached = data.rdd.persist(StorageLevel.MEMORY_AND_DISK)
+    val cached = data.rdd.persist(StorageLevel.DISK_ONLY)
     try {
       GradientBoostedTrees.train(cached, boostingStrategy)
     } finally {

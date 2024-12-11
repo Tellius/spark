@@ -38,6 +38,7 @@ import org.apache.spark.mllib.util.MLUtils
 import org.apache.spark.sql.{DataFrame, Dataset}
 import org.apache.spark.sql.types.{IntegerType, StructType}
 import org.apache.spark.util.ThreadUtils
+import org.apache.spark.storage.StorageLevel
 
 /**
  * Params for [[CrossValidator]] and [[CrossValidatorModel]].
@@ -164,8 +165,8 @@ class CrossValidator @Since("1.2.0") (@Since("1.4.0") override val uid: String)
       (MLUtils.kFold(dataset.toDF, $(numFolds), $(foldCol)), filteredSchema)
     }
     val metrics = splits.zipWithIndex.map { case ((training, validation), splitIndex) =>
-      val trainingDataset = sparkSession.createDataFrame(training, schemaWithoutFold).cache()
-      val validationDataset = sparkSession.createDataFrame(validation, schemaWithoutFold).cache()
+      val trainingDataset = sparkSession.createDataFrame(training, schemaWithoutFold).persist(StorageLevel.DISK_ONLY)
+      val validationDataset = sparkSession.createDataFrame(validation, schemaWithoutFold).persist(StorageLevel.DISK_ONLY)
       instr.logDebug(s"Train split $splitIndex with multiple sets of parameters.")
 
       // Fit models in a Future for training in parallel

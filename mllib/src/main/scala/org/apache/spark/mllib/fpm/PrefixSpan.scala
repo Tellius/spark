@@ -149,7 +149,7 @@ class PrefixSpan private (
     // Keep only frequent items from input sequences and convert them to internal storage.
     val itemToInt = freqItems.zipWithIndex.toMap
     val dataInternalRepr = toDatabaseInternalRepr(data, itemToInt)
-      .persist(StorageLevel.MEMORY_AND_DISK)
+      .persist(StorageLevel.DISK_ONLY)
 
     val results = genFreqPatterns(dataInternalRepr, minCount, maxPatternLength, maxLocalProjDBSize)
 

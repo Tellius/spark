@@ -192,7 +192,7 @@ class CountVectorizer @Since("1.5.0") (@Since("1.5.0") override val uid: String)
     val countingRequired = $(minDF) < 1.0 || $(maxDF) < 1.0
     val maybeInputSize = if (countingRequired) {
       if (dataset.storageLevel == StorageLevel.NONE) {
-        input.persist(StorageLevel.MEMORY_AND_DISK)
+        input.persist(StorageLevel.DISK_ONLY)
       }
       Some(input.count)
     } else {
@@ -228,7 +228,7 @@ class CountVectorizer @Since("1.5.0") (@Since("1.5.0") override val uid: String)
 
     val wordCounts = maybeFilteredWordCounts
       .map { case (word, (count, _)) => (word, count) }
-      .persist(StorageLevel.MEMORY_AND_DISK)
+      .persist(StorageLevel.DISK_ONLY)
 
     val fullVocabSize = wordCounts.count()
 

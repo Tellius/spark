@@ -94,7 +94,7 @@ private[shared] object SharedParamsCodeGen {
       ParamDesc[Int]("aggregationDepth", "suggested depth for treeAggregate (>= 2)", Some("2"),
         isValid = "ParamValidators.gtEq(2)", isExpertParam = true),
       ParamDesc[String]("intermediateStorageLevel", "Param for StorageLevel" +
-        "for intermediate datasets", Some("\"MEMORY_AND_DISK\""),
+        "for intermediate datasets", Some("\"DISK_ONLY\""),
         isValid = """(s: String) => Try(StorageLevel.fromString(s)).isSuccess && s != "NONE"""",
         isExpertParam = true),
       ParamDesc[Boolean]("collectSubModels", "whether to collect a list of sub-models trained " +

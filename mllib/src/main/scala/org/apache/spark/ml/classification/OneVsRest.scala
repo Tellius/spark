@@ -199,7 +199,7 @@ final class OneVsRestModel private[ml] (
     // persist if underlying dataset is not persistent.
     val handlePersistence = !dataset.isStreaming && dataset.storageLevel == StorageLevel.NONE
     if (handlePersistence) {
-      newDataset.persist(StorageLevel.MEMORY_AND_DISK)
+      newDataset.persist(StorageLevel.DISK_ONLY)
     }
 
     // update the accumulator column with the result of prediction of models
@@ -413,7 +413,7 @@ final class OneVsRest @Since("1.4.0") (
     // persist if underlying dataset is not persistent.
     val handlePersistence = dataset.storageLevel == StorageLevel.NONE
     if (handlePersistence) {
-      multiclassLabeled.persist(StorageLevel.MEMORY_AND_DISK)
+      multiclassLabeled.persist(StorageLevel.DISK_ONLY)
     }
 
     val executionContext = getExecutionContext

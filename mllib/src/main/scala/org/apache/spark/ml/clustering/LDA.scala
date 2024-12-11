@@ -953,7 +953,7 @@ class LDA @Since("1.6.0") (
     val handlePersistence = dataset.storageLevel == StorageLevel.NONE &&
       getOptimizer.toLowerCase(Locale.ROOT) == "online"
     if (handlePersistence) {
-      oldData.persist(StorageLevel.MEMORY_AND_DISK)
+      oldData.persist(StorageLevel.DISK_ONLY)
     }
 
     val oldLDA = new OldLDA()

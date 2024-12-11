@@ -317,7 +317,7 @@ private[spark] object GradientBoostedTrees extends Logging {
     // Prepare periodic checkpointers
     // Note: this is checkpointing the unweighted training error
     val predErrorCheckpointer = new PeriodicRDDCheckpointer[(Double, Double)](
-      treeStrategy.getCheckpointInterval, sc, StorageLevel.MEMORY_AND_DISK)
+      treeStrategy.getCheckpointInterval, sc, StorageLevel.DISK_ONLY)
 
     timer.stop("init")
 
@@ -342,7 +342,7 @@ private[spark] object GradientBoostedTrees extends Logging {
     // Cache input RDD for speedup during multiple passes.
     val treePoints = TreePoint.convertToTreeRDD(
       retaggedInput, splits, metadata)
-      .persist(StorageLevel.MEMORY_AND_DISK)
+      .persist(StorageLevel.DISK_ONLY)
       .setName("binned tree points")
 
     val firstCounts = BaggedPoint
@@ -352,7 +352,7 @@ private[spark] object GradientBoostedTrees extends Logging {
         require(bagged.subsampleCounts.length == 1)
         require(bagged.sampleWeight == bagged.datum.weight)
         bagged.subsampleCounts.head
-      }.persist(StorageLevel.MEMORY_AND_DISK)
+      }.persist(StorageLevel.DISK_ONLY)
       .setName("firstCounts at iter=0")
 
     val firstBagged = treePoints.zip(firstCounts)
@@ -389,11 +389,11 @@ private[spark] object GradientBoostedTrees extends Logging {
       timer.start("init validation")
       validationTreePoints = TreePoint.convertToTreeRDD(
         validationInput.retag(classOf[Instance]), splits, metadata)
-        .persist(StorageLevel.MEMORY_AND_DISK)
+        .persist(StorageLevel.DISK_ONLY)
       validatePredError = computeInitialPredictionAndError(
         validationTreePoints, firstTreeWeight, firstTreeModel, loss, bcSplits)
       validatePredErrorCheckpointer = new PeriodicRDDCheckpointer[(Double, Double)](
-        treeStrategy.getCheckpointInterval, sc, StorageLevel.MEMORY_AND_DISK)
+        treeStrategy.getCheckpointInterval, sc, StorageLevel.DISK_ONLY)
       validatePredErrorCheckpointer.update(validatePredError)
       bestValidateError = computeWeightedError(validationTreePoints, validatePredError)
       timer.stop("init validation")
@@ -420,7 +420,7 @@ private[spark] object GradientBoostedTrees extends Logging {
           // Update labels with pseudo-residuals
           val newLabel = -loss.gradient(pred, bagged.datum.label)
           (newLabel, bagged.subsampleCounts.head)
-        }.persist(StorageLevel.MEMORY_AND_DISK)
+        }.persist(StorageLevel.DISK_ONLY)
         .setName(s"labelWithCounts at iter=$m")
 
       val bagged = treePoints.zip(labelWithCounts)

@@ -166,10 +166,10 @@ class BisectingKMeans private (
       .map { case ((x, weight), norm) => new VectorWithNorm(x, norm, weight) }
 
     if (handlePersistence) {
-      vectors.persist(StorageLevel.MEMORY_AND_DISK)
+      vectors.persist(StorageLevel.DISK_ONLY)
     } else {
       // Compute and cache vector norms for fast distance computation.
-      norms.persist(StorageLevel.MEMORY_AND_DISK)
+      norms.persist(StorageLevel.DISK_ONLY)
     }
 
     var assignments = vectors.map(v => (ROOT_INDEX, v))
@@ -227,7 +227,7 @@ class BisectingKMeans private (
         }
         preIndices = indices
         indices = updateAssignments(assignments, divisibleIndices, newClusterCenters, dMeasure).keys
-          .persist(StorageLevel.MEMORY_AND_DISK)
+          .persist(StorageLevel.DISK_ONLY)
         assignments = indices.zip(vectors)
         inactiveClusters ++= activeClusters
         activeClusters = newClusters

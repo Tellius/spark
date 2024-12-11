@@ -93,8 +93,8 @@ class ALS private (
   private var nonnegative = false
 
   /** storage level for user/product in/out links */
-  private var intermediateRDDStorageLevel: StorageLevel = StorageLevel.MEMORY_AND_DISK
-  private var finalRDDStorageLevel: StorageLevel = StorageLevel.MEMORY_AND_DISK
+  private var intermediateRDDStorageLevel: StorageLevel = StorageLevel.DISK_ONLY
+  private var finalRDDStorageLevel: StorageLevel = StorageLevel.DISK_ONLY
 
   /** checkpoint interval */
   private var checkpointInterval: Int = 10
@@ -196,7 +196,7 @@ class ALS private (
 
   /**
    * Sets storage level for intermediate RDDs (user/product in/out links). The default value is
-   * `MEMORY_AND_DISK`. Users can change it to a serialized storage, e.g., `MEMORY_AND_DISK_SER` and
+   * `DISK_ONLY`. Users can change it to a serialized storage, e.g., `DISK_ONLY` and
    * set `spark.rdd.compress` to `true` to reduce the space requirement, at the cost of speed.
    */
   @Since("1.1.0")
@@ -209,8 +209,8 @@ class ALS private (
 
   /**
    * Sets storage level for final RDDs (user/product used in MatrixFactorizationModel). The default
-   * value is `MEMORY_AND_DISK`. Users can change it to a serialized storage, e.g.
-   * `MEMORY_AND_DISK_SER` and set `spark.rdd.compress` to `true` to reduce the space requirement,
+   * value is `DISK_ONLY`. Users can change it to a serialized storage, e.g.
+   * `DISK_ONLY` and set `spark.rdd.compress` to `true` to reduce the space requirement,
    * at the cost of speed.
    */
   @Since("1.3.0")

@@ -173,7 +173,7 @@ class FPGrowth @Since("2.2.0") (
     }
 
     if (handlePersistence) {
-      items.persist(StorageLevel.MEMORY_AND_DISK)
+      items.persist(StorageLevel.DISK_ONLY)
     }
     val inputRowCount = items.count()
     instr.logNumExamples(inputRowCount)
